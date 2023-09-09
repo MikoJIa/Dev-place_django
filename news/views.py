@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 from .forms import NewsForm
 from .models import *
@@ -22,8 +22,8 @@ def index(request):  # любая функция должна принимать
 
 
 def get_category(request, category_slug):
-    # category = get_object_or_404(Category, slug=category_slug)
-    category = Category.objects.get(slug=category_slug)
+    category = get_object_or_404(Category, slug=category_slug)
+    # category = Category.objects.get(slug=category_slug)
     news = News.objects.filter(category=category)
 
     context = {
@@ -52,3 +52,7 @@ def add_news(request):
         'form': form
     }
     return render(request, 'news/add_news.html', context)
+
+
+def pageNotFound404(request, exception):
+    return HttpResponseNotFound('<h1>Такой страницы точно не существует!!!!!</h1>')

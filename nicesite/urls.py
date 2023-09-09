@@ -19,6 +19,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from news.views import pageNotFound404
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('news.urls'))
@@ -30,3 +32,5 @@ if settings.DEBUG:
 # Работа с ORM
 # CRUD - Create, read, delete, update
 # заходим в консоль джанго
+
+handler404 = pageNotFound404
