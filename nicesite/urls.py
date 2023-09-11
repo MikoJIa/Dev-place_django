@@ -33,4 +33,5 @@ if settings.DEBUG:
 # CRUD - Create, read, delete, update
 # заходим в консоль джанго
 
-handler404 = pageNotFound404
+
+handler404 = 'news.views.pageNotFound404'

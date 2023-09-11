@@ -1,9 +1,7 @@
 from django.db import models
-from django.db.models.fields import DateTimeField
-from datetime import datetime
 from django.urls import reverse
-
-
+from unidecode import unidecode
+from django.utils.text import slugify
 
 # id, title, content, created_at, update_at, photo, is_published
 
@@ -29,6 +27,13 @@ class News(models.Model):
     def get_absolute_url(self):
         return reverse('view_news', kwargs={'news_slug': self.slug})
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            # Используем unidecode для преобразования русского текста в ASCII
+            ascii_title = unidecode(self.title)
+            self.slug = slugify(ascii_title)
+        super().save(*args, **kwargs)
+
 
 class Category(models.Model):
     title = models.CharField(max_length=150, db_index=True, verbose_name='имя котегории')
@@ -45,3 +50,4 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse('category', kwargs={'category_slug': self.slug})
+

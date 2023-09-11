@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title %}
-{{title}}
+новости со всего мира
 {% endblock%}
 {% block sidebar %}
 
@@ -10,7 +10,7 @@
 
 {% block content %}
             <h1>{{ title }}</h1>
-            {% for item in news %}
+            {% for item in object_list %}
             <div class="card mb-3">
                 <div class="card-header">
                     Категория: {{ item.category }}

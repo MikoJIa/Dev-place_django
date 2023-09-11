@@ -1,19 +1,34 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound
 
 from .forms import NewsForm
 from .models import *
+from django.views.generic import ListView
 
 
-def index(request):  # любая функция должна принимать аргумент
-    news = News.objects.all()
-    context = {
-        'news': news,
-        'title': 'Список новостей',
+class HomeNews(ListView):
+    model = News
+    template_name = 'news/index.html'
+    context_object_name = 'news'
+    # extra_context = {'title': 'Главная страница'}
 
-    }
-    return render(request,
-                  f'news/index.html', context)
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Главная страница'
+        return context
+
+    def get_queryset(self):
+        return News.objects.filter(is_published=True)
+
+# def index(request):  # любая функция должна принимать аргумент
+#     news = News.objects.all()
+#     context = {
+#         'news': news,
+#         'title': 'Список новостей',
+#
+#     }
+#     return render(request,
+#                   f'news/index.html', context)
     # news = News.objects.all()
     # res = '<h1>Список новостей</h1>'
     # for i in news:
@@ -45,7 +60,12 @@ def view_news(request, news_slug):
 def add_news(request):
     global form
     if request.method == 'POST':
-        pass
+        form = NewsForm(request.POST)  # еслт у нас запрос POST
+        if form.is_valid():
+            #print(form.cleaned_data)
+            #news = News.objects.create(**form.cleaned_data)  # мы передаём в нашу базу данных распакованные данные
+            news = form.save()
+            return redirect(news) #  после создания новости переносит нас на страницу наше новости
     else:
         form = NewsForm()
     context = {
@@ -55,4 +75,4 @@ def add_news(request):
 
 
 def pageNotFound404(request, exception):
-    return HttpResponseNotFound('<h1>Такой страницы точно не существует!!!!!</h1>')
+    return render(request, 'page404.html', status=404)
